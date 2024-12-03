@@ -1,0 +1,35 @@
+!pip install streamlit
+import streamlit as st
+import pickle
+import yfinance as yf import numpy as np
+import matplotlib.pyplot as p
+from scipy.optimize import minimize
+import seaborn as sns
+import os
+from datetime import date from prophet import Prophet from prophet.plot import plot_plotly
+from plotly import graph_objs as go
+# ---- Bank Functions #
+def load_bank_accounts(): try:
+if os.path.exists('bank_accounts.pkl'):
+with open('bank_accounts.pkl', 'rb') as f: return pickle.load(f)
+return {}
+except (FileNotFoundError, EOFError, pickle.UnpicklingError) as e: st.warning(f"Error loading bank accounts: {e}")
+return {}
+bank_accounts = load_bank_accounts()
+def save_bank_accounts(): try:
+with open('bank_accounts.pkl', 'wb') as f: pickle.dump(bank_accounts, f)
+except Exception as e:
+st.error(f"Error saving bank accounts: {e}")
+def add_bank_account(account_name, balance):
+bank_accounts[account_name] = balance
+save_bank_accounts()
+return f"Added bank account '{account_name}' with balance ${balance:.2f}."
+def remove_bank_account(account_name): if account_name in bank_accounts:
+del bank_accounts[account_name] save_bank_accounts()
+return f"Removed bank account '{account_name}'."
+else:
+return f"Bank account '{account_name}' not found."
+def update_bank_account(account_name, balance): if account_name in bank_accounts:
+bank_accounts[account_name] = balance
+save_bank_accounts()
+return f"Updated bank account '{account_name}' to balance ${balance:.2f}."
