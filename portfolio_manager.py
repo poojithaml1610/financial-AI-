@@ -1,579 +1,296 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 1,
-   "id": "e9bb7019-a57f-434c-9bb5-d6057a4d38a7",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Requirement already satisfied: streamlit in /opt/anaconda3/lib/python3.12/site-packages (1.32.0)\n",
-      "Requirement already satisfied: altair<6,>=4.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (5.0.1)\n",
-      "Requirement already satisfied: blinker<2,>=1.0.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (1.6.2)\n",
-      "Requirement already satisfied: cachetools<6,>=4.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (5.3.3)\n",
-      "Requirement already satisfied: click<9,>=7.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (8.1.7)\n",
-      "Requirement already satisfied: numpy<2,>=1.19.3 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (1.26.4)\n",
-      "Requirement already satisfied: packaging<24,>=16.8 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (23.2)\n",
-      "Requirement already satisfied: pandas<3,>=1.3.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (2.2.2)\n",
-      "Requirement already satisfied: pillow<11,>=7.1.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (10.3.0)\n",
-      "Requirement already satisfied: protobuf<5,>=3.20 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (3.20.3)\n",
-      "Requirement already satisfied: pyarrow>=7.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (14.0.2)\n",
-      "Requirement already satisfied: requests<3,>=2.27 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (2.32.2)\n",
-      "Requirement already satisfied: rich<14,>=10.14.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (13.3.5)\n",
-      "Requirement already satisfied: tenacity<9,>=8.1.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (8.2.2)\n",
-      "Requirement already satisfied: toml<2,>=0.10.1 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (0.10.2)\n",
-      "Requirement already satisfied: typing-extensions<5,>=4.3.0 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (4.11.0)\n",
-      "Requirement already satisfied: gitpython!=3.1.19,<4,>=3.0.7 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (3.1.37)\n",
-      "Requirement already satisfied: pydeck<1,>=0.8.0b4 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (0.8.0)\n",
-      "Requirement already satisfied: tornado<7,>=6.0.3 in /opt/anaconda3/lib/python3.12/site-packages (from streamlit) (6.4.1)\n",
-      "Requirement already satisfied: jinja2 in /opt/anaconda3/lib/python3.12/site-packages (from altair<6,>=4.0->streamlit) (3.1.4)\n",
-      "Requirement already satisfied: jsonschema>=3.0 in /opt/anaconda3/lib/python3.12/site-packages (from altair<6,>=4.0->streamlit) (4.19.2)\n",
-      "Requirement already satisfied: toolz in /opt/anaconda3/lib/python3.12/site-packages (from altair<6,>=4.0->streamlit) (0.12.0)\n",
-      "Requirement already satisfied: gitdb<5,>=4.0.1 in /opt/anaconda3/lib/python3.12/site-packages (from gitpython!=3.1.19,<4,>=3.0.7->streamlit) (4.0.7)\n",
-      "Requirement already satisfied: python-dateutil>=2.8.2 in /opt/anaconda3/lib/python3.12/site-packages (from pandas<3,>=1.3.0->streamlit) (2.9.0.post0)\n",
-      "Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.12/site-packages (from pandas<3,>=1.3.0->streamlit) (2024.1)\n",
-      "Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.12/site-packages (from pandas<3,>=1.3.0->streamlit) (2023.3)\n",
-      "Requirement already satisfied: charset-normalizer<4,>=2 in /opt/anaconda3/lib/python3.12/site-packages (from requests<3,>=2.27->streamlit) (2.0.4)\n",
-      "Requirement already satisfied: idna<4,>=2.5 in /opt/anaconda3/lib/python3.12/site-packages (from requests<3,>=2.27->streamlit) (3.7)\n",
-      "Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/anaconda3/lib/python3.12/site-packages (from requests<3,>=2.27->streamlit) (2.2.2)\n",
-      "Requirement already satisfied: certifi>=2017.4.17 in /opt/anaconda3/lib/python3.12/site-packages (from requests<3,>=2.27->streamlit) (2024.7.4)\n",
-      "Requirement already satisfied: markdown-it-py<3.0.0,>=2.2.0 in /opt/anaconda3/lib/python3.12/site-packages (from rich<14,>=10.14.0->streamlit) (2.2.0)\n",
-      "Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /opt/anaconda3/lib/python3.12/site-packages (from rich<14,>=10.14.0->streamlit) (2.15.1)\n",
-      "Requirement already satisfied: smmap<5,>=3.0.1 in /opt/anaconda3/lib/python3.12/site-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.19,<4,>=3.0.7->streamlit) (4.0.0)\n",
-      "Requirement already satisfied: MarkupSafe>=2.0 in /opt/anaconda3/lib/python3.12/site-packages (from jinja2->altair<6,>=4.0->streamlit) (2.1.3)\n",
-      "Requirement already satisfied: attrs>=22.2.0 in /opt/anaconda3/lib/python3.12/site-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (23.1.0)\n",
-      "Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /opt/anaconda3/lib/python3.12/site-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (2023.7.1)\n",
-      "Requirement already satisfied: referencing>=0.28.4 in /opt/anaconda3/lib/python3.12/site-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.30.2)\n",
-      "Requirement already satisfied: rpds-py>=0.7.1 in /opt/anaconda3/lib/python3.12/site-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.10.6)\n",
-      "Requirement already satisfied: mdurl~=0.1 in /opt/anaconda3/lib/python3.12/site-packages (from markdown-it-py<3.0.0,>=2.2.0->rich<14,>=10.14.0->streamlit) (0.1.0)\n",
-      "Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.12/site-packages (from python-dateutil>=2.8.2->pandas<3,>=1.3.0->streamlit) (1.16.0)\n",
-      "Note: you may need to restart the kernel to use updated packages.\n"
-     ]
-    }
-   ],
-   "source": [
-    "pip install streamlit\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 2,
-   "id": "a16ec6cf-a44c-4d37-9fe3-94de1b75f38a",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import pickle"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 3,
-   "id": "2f4070ba-a44b-42ae-91fc-ad1fd20ba9c9",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import streamlit as st "
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 4,
-   "id": "c051467d-52b4-4bb7-bb42-181e8d064075",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import yfinance as yf\n",
-    "import numpy as np\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 5,
-   "id": "492e2b81-240e-4b87-9ee4-7a02181f6235",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import matplotlib.pyplot as p"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 6,
-   "id": "04b82964-abd1-49e6-adaf-b85fc44e0c29",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "from scipy.optimize import minimize"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 20,
-   "id": "272a7be1-cdac-494b-aed4-c1692dc55b35",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Requirement already satisfied: prophet in /opt/anaconda3/lib/python3.12/site-packages (1.1.6)\n",
-      "Requirement already satisfied: cmdstanpy>=1.0.4 in /opt/anaconda3/lib/python3.12/site-packages (from prophet) (1.2.4)\n",
-      "Requirement already satisfied: numpy>=1.15.4 in /opt/anaconda3/lib/python3.12/site-packages (from prophet) (1.26.4)\n",
-      "Requirement already satisfied: matplotlib>=2.0.0 in /opt/anaconda3/lib/python3.12/site-packages (from prophet) (3.8.4)\n",
-      "Requirement already satisfied: pandas>=1.0.4 in /opt/anaconda3/lib/python3.12/site-packages (from prophet) (2.2.2)\n",
-      "Requirement already satisfied: holidays<1,>=0.25 in /opt/anaconda3/lib/python3.12/site-packages (from prophet) (0.62)\n",
-      "Requirement already satisfied: tqdm>=4.36.1 in /opt/anaconda3/lib/python3.12/site-packages (from prophet) (4.66.4)\n",
-      "Requirement already satisfied: importlib-resources in /opt/anaconda3/lib/python3.12/site-packages (from prophet) (6.4.5)\n",
-      "Requirement already satisfied: stanio<2.0.0,>=0.4.0 in /opt/anaconda3/lib/python3.12/site-packages (from cmdstanpy>=1.0.4->prophet) (0.5.1)\n",
-      "Requirement already satisfied: python-dateutil in /opt/anaconda3/lib/python3.12/site-packages (from holidays<1,>=0.25->prophet) (2.9.0.post0)\n",
-      "Requirement already satisfied: contourpy>=1.0.1 in /opt/anaconda3/lib/python3.12/site-packages (from matplotlib>=2.0.0->prophet) (1.2.0)\n",
-      "Requirement already satisfied: cycler>=0.10 in /opt/anaconda3/lib/python3.12/site-packages (from matplotlib>=2.0.0->prophet) (0.11.0)\n",
-      "Requirement already satisfied: fonttools>=4.22.0 in /opt/anaconda3/lib/python3.12/site-packages (from matplotlib>=2.0.0->prophet) (4.51.0)\n",
-      "Requirement already satisfied: kiwisolver>=1.3.1 in /opt/anaconda3/lib/python3.12/site-packages (from matplotlib>=2.0.0->prophet) (1.4.4)\n",
-      "Requirement already satisfied: packaging>=20.0 in /opt/anaconda3/lib/python3.12/site-packages (from matplotlib>=2.0.0->prophet) (23.2)\n",
-      "Requirement already satisfied: pillow>=8 in /opt/anaconda3/lib/python3.12/site-packages (from matplotlib>=2.0.0->prophet) (10.3.0)\n",
-      "Requirement already satisfied: pyparsing>=2.3.1 in /opt/anaconda3/lib/python3.12/site-packages (from matplotlib>=2.0.0->prophet) (3.0.9)\n",
-      "Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.12/site-packages (from pandas>=1.0.4->prophet) (2024.1)\n",
-      "Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.12/site-packages (from pandas>=1.0.4->prophet) (2023.3)\n",
-      "Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.12/site-packages (from python-dateutil->holidays<1,>=0.25->prophet) (1.16.0)\n"
-     ]
-    }
-   ],
-   "source": [
-    "!pip install prophet\n",
-    "\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": None,
-   "id": "5e398a78-f12a-491f-8ca6-3970b7fdaaf2",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import prophet\n",
-    "print(prophet.__version__)\n",
-    "\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": None,
-   "id": "dd768433-a4af-4948-bbc2-76e76b9d78b8",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "pip install --no-cache-dir prophet\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": None,
-   "id": "e01029a5-e541-47fd-811b-b11668862285",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "sudo apt-get install gcc"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": None,
-   "id": "246b3c74-8c19-4567-b9b8-f6893ea2b346",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "pip install fbprophet\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": None,
-   "id": "e3bb42ed-3ead-4c0c-b947-e51d41339ce8",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import prophet\n",
-    "print(\"Prophet installed successfully\")\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 5,
-   "id": "f9c7ec51-227b-4249-8ac3-8ac866382d39",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import seaborn as sns\n",
-    "import os\n",
-    "from datetime import date\n",
-    "from prophet import Prophet\n",
-    "from prophet.plot import plot_plotly\n",
-    "from plotly import graph_objs as go\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 33,
-   "id": "585b3516-4f13-4a17-8c74-8b265a44b99f",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def load_bank_accounts(): \n",
-    "    try:\n",
-    "        if os.path.exists('bank_accounts.pkl'):\n",
-    "            with open('bank_accounts.pkl', 'rb') as f: \n",
-    "                return pickle.load(f)\n",
-    "        return {}  # This return statement should not be inside the \"with\" block\n",
-    "    except (FileNotFoundError, EOFError, pickle.UnpicklingError) as e:\n",
-    "        print(f\"Error loading bank accounts: {e}\")  # Changed 'st.warning' to 'print' unless 'st' is defined for Streamlit\n",
-    "        return {}\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 37,
-   "id": "b6b2e775-adde-4006-9c17-e09e0d8d19ee",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "bank_accounts = load_bank_accounts()"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 39,
-   "id": "96a5122b-c2a3-412b-bbf7-2bf3daf79fd2",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def save_bank_accounts(): \n",
-    "    try:\n",
-    "        with open('bank_accounts.pkl', 'wb') as f: \n",
-    "            pickle.dump(bank_accounts, f)\n",
-    "    except Exception as e:\n",
-    "        st.error(f\"Error saving bank accounts: {e}\")\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 41,
-   "id": "1142f0ca-3a08-4b09-b564-f70ea820d402",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def add_bank_account(account_name, balance): \n",
-    "    bank_accounts[account_name] = balance\n",
-    "    save_bank_accounts()\n",
-    "    return f\"Added bank account '{account_name}' with balance ${balance:.2f}.\"\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 43,
-   "id": "fcbdb26a-4bcc-4bf2-8d60-479c0f89bfd1",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def remove_bank_account(account_name, bank_accounts): \n",
-    "    if account_name in bank_accounts:\n",
-    "        del bank_accounts[account_name]\n",
-    "        save_bank_accounts()  # Ensure this function is defined elsewhere\n",
-    "        return f\"Removed bank account '{account_name}'.\"\n",
-    "    else:\n",
-    "        return f\"Bank account '{account_name}' not found.\"\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 45,
-   "id": "dfc25843-afbd-473b-b760-18c2b9bdb9b5",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def update_bank_account(account_name, balance):\n",
-    "    if account_name in bank_accounts:\n",
-    "        bank_accounts[account_name] = balance\n",
-    "        save_bank_accounts()\n",
-    "        return f\"Updated bank account '{account_name}' to balance ${balance:.2f}.\"\n",
-    "    else:\n",
-    "        return f\"Bank account '{account_name}' not found.\""
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 47,
-   "id": "8b9c77d1-1636-47b5-acc4-25a07e276de1",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def show_bank_accounts():\n",
-    "    if bank_accounts:\n",
-    "        response = \"Your bank accounts:\\n\"\n",
-    "        for account_name, balance in bank_accounts.items():\n",
-    "            response += f\"{account_name}: ${balance:.2f}\\n\"\n",
-    "        return response.strip()\n",
-    "    else:\n",
-    "        return \"No bank accounts found.\""
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 49,
-   "id": "f0817b35-64a0-4710-98b6-6417191357f6",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def total_balance():\n",
-    "    return f\"Total balance across all accounts: ${sum(bank_accounts.values()):.2f}\"\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 51,
-   "id": "3a938718-b5ca-4113-a478-3f3959f3574c",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# ---- Stock Portfolio Functions ----\n",
-    "portfolio = {}"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 53,
-   "id": "130c3889-4fda-45ec-81b3-a6e3ca757863",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def load_portfolio():\n",
-    "    try:\n",
-    "        if os.path.exists('portfolio.pkl'):\n",
-    "            with open('portfolio.pkl', 'rb') as f:\n",
-    "                return pickle.load(f)\n",
-    "        return {}\n",
-    "    except (FileNotFoundError, EOFError, pickle.UnpicklingError) as e:\n",
-    "        st.warning(f\"Error loading portfolio: {e}\")\n",
-    "        return {}"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 55,
-   "id": "20aba265-6376-405b-9042-79d06d9cd0a1",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def save_portfolio():\n",
-    "    try:\n",
-    "        with open('portfolio.pkl', 'wb') as f:\n",
-    "            pickle.dump(portfolio, f)\n",
-    "    except Exception as e:\n",
-    "        st.error(f\"Error saving portfolio: {e}\")"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 57,
-   "id": "a6931bca-2b9c-4bc0-b633-1ef24cc48655",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def add_stock(ticker, amount):\n",
-    "    ticker = ticker.upper()\n",
-    "    if ticker in portfolio:\n",
-    "        portfolio[ticker] += amount\n",
-    "    else:\n",
-    "        portfolio[ticker] = amount\n",
-    "    save_portfolio()\n",
-    "    return f\"Added {amount} shares of {ticker} to your portfolio.\""
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 59,
-   "id": "62454b1b-a037-484c-9607-12ac40180677",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def remove_stock(ticker, amount):\n",
-    "    ticker = ticker.upper()\n",
-    "    if ticker in portfolio:\n",
-    "        if portfolio[ticker] >= amount:\n",
-    "            portfolio[ticker] -= amount\n",
-    "            if portfolio[ticker] == 0:\n",
-    "                del portfolio[ticker]\n",
-    "            save_portfolio()\n",
-    "            return f\"Removed {amount} shares of {ticker} from your portfolio.\"\n",
-    "        else:\n",
-    "            return \"You don't have that many shares.\"\n",
-    "    else:\n",
-    "        return f\"No shares of {ticker} found in your portfolio.\"\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 61,
-   "id": "44a91523-5279-4f10-b38f-9ad212cb9fa9",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def show_portfolio():\n",
-    "    if portfolio:\n",
-    "        response = \"Your current portfolio:\\n\"\n",
-    "        for ticker, shares in portfolio.items():\n",
-    "            response += f\"{ticker}: {shares} shares\\n\"\n",
-    "        return response.strip()\n",
-    "    else:\n",
-    "        return \"Your portfolio is empty.\"\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 63,
-   "id": "775f8209-2a80-42b8-949e-a1de313aff43",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def portfolio_worth():\n",
-    "    total_value = 0\n",
-    "    response = \"\"\n",
-    "    for ticker, shares in portfolio.items():\n",
-    "        try:\n",
-    "            stock = yf.Ticker(ticker)\n",
-    "            price = stock.history(period=\"1d\")['Close'].iloc[-1]\n",
-    "            total_value += shares * price\n",
-    "            response += f\"{ticker}: {shares} shares at ${price:.2f} each, total ${shares * price:.2f}\\n\"\n",
-    "        except IndexError:\n",
-    "            response += f\"Could not retrieve data for {ticker}. Data might be unavailable.\\n\"\n",
-    "        except Exception as e:\n",
-    "            response += f\"Error retrieving data for {ticker}: {e}\\n\"\n",
-    "    response += f\"Your portfolio is worth: ${total_value:.2f} USD\"\n",
-    "    return response\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 69,
-   "id": "54ad5872-bab1-46fe-9c92-ab7cf86aa8fe",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import streamlit as st\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 71,
-   "id": "7476e575-031b-4c92-985f-e02ddd7df0d2",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "2024-12-03 22:09:05.799 \n",
-      "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
-      "  command:\n",
-      "\n",
-      "    streamlit run /opt/anaconda3/lib/python3.12/site-packages/ipykernel_launcher.py [ARGUMENTS]\n"
-     ]
-    }
-   ],
-   "source": [
-    "def main():\n",
-    "    st.title(\"Investment Portfolio Management\")\n",
-    "    st.sidebar.title(\"Navigation\")\n",
-    "    options = st.sidebar.radio(\n",
-    "        \"Select an option\", \n",
-    "        (\"Bank Accounts\", \"Stocks\", \"Portfolio Worth\")\n",
-    "    )\n",
-    "\n",
-    "    if options == \"Bank Accounts\":\n",
-    "        st.header(\"Manage Bank Accounts\")\n",
-    "        action = st.selectbox(\"Action\", (\"Add Account\", \"Remove Account\", \"Update Account\", \"Show Accounts\"))\n",
-    "        if action == \"Add Account\":\n",
-    "            account_name = st.text_input(\"Account Name\")\n",
-    "            balance = st.number_input(\"Balance\", min_value=0.0)\n",
-    "            if st.button(\"Add Account\"):\n",
-    "                st.write(add_bank_account(account_name, balance))\n",
-    "        elif action == \"Remove Account\":\n",
-    "            account_name = st.text_input(\"Account Name\")\n",
-    "            if st.button(\"Remove Account\"):\n",
-    "                st.write(remove_bank_account(account_name))\n",
-    "        elif action == \"Update Account\":\n",
-    "            account_name = st.text_input(\"Account Name\")\n",
-    "            balance = st.number_input(\"New Balance\", min_value=0.0)\n",
-    "            if st.button(\"Update Account\"):\n",
-    "                st.write(update_bank_account(account_name, balance))\n",
-    "        elif action == \"Show Accounts\":\n",
-    "            st.write(show_bank_accounts())\n",
-    "            st.write(total_balance())\n",
-    "\n",
-    "    elif options == \"Stocks\":\n",
-    "        st.header(\"Manage Stock Portfolio\")\n",
-    "        action = st.selectbox(\"Action\", (\"Add Stock\", \"Remove Stock\", \"Show Portfolio\"))\n",
-    "        if action == \"Add Stock\":\n",
-    "            ticker = st.text_input(\"Stock Ticker\")\n",
-    "            amount = st.number_input(\"Number of Shares\", min_value=0)\n",
-    "            if st.button(\"Add Stock\"):\n",
-    "                st.write(add_stock(ticker, amount))\n",
-    "        elif action == \"Remove Stock\":\n",
-    "            ticker = st.text_input(\"Stock Ticker\")\n",
-    "            amount = st.number_input(\"Number of Shares\", min_value=0)\n",
-    "            if st.button(\"Remove Stock\"):\n",
-    "                st.write(remove_stock(ticker, amount))\n",
-    "        elif action == \"Show Portfolio\":\n",
-    "            st.write(show_portfolio())\n",
-    "            st.write(portfolio_worth())\n",
-    "\n",
-    "    elif options == \"Portfolio Worth\":\n",
-    "        st.header(\"Portfolio Worth\")\n",
-    "        st.write(portfolio_worth())\n",
-    "\n",
-    "if __name__ == \"__main__\":\n",
-    "    main()"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": None,
-   "id": "3057fa11-b51c-4f14-86e6-ddaa804a3e35",
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  },
-  {
-   "cell_type": "code",
-   "execution_count": None,
-   "id": "7d6664c3-1fa4-41d8-be1d-4ce411e5519c",
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3 (ipykernel)",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.12.4"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+import streamlit as st import pickle
+import yfinance as yf import numpy as np
+import matplotlib.pyplot as p
+from scipy.optimize import minimize
+import seaborn as sns
+import os
+from datetime import date from prophet import Prophet from prophet.plot import plot_plotly
+from plotly import graph_objs as go
+# ---- Bank Functions #
+def load_bank_accounts(): try:
+if os.path.exists('bank_accounts.pkl'):
+with open('bank_accounts.pkl', 'rb') as f: return pickle.load(f)
+return {}
+except (FileNotFoundError, EOFError, pickle.UnpicklingError) as e: st.warning(f"Error loading bank accounts: {e}")
+return {}
+ bank_accounts = load_bank_accounts()
+def save_bank_accounts(): try:
+with open('bank_accounts.pkl', 'wb') as f: pickle.dump(bank_accounts, f)
+except Exception as e:
+st.error(f"Error saving bank accounts: {e}")
+def add_bank_account(account_name, balance):
+bank_accounts[account_name] = balance
+save_bank_accounts()
+return f"Added bank account '{account_name}' with balance ${balance:.2f}."
+def remove_bank_account(account_name): if account_name in bank_accounts:
+del bank_accounts[account_name] save_bank_accounts()
+return f"Removed bank account '{account_name}'."
+else:
+return f"Bank account '{account_name}' not found."
+def update_bank_account(account_name, balance): if account_name in bank_accounts:
+bank_accounts[account_name] = balance
+save_bank_accounts()
+return f"Updated bank account '{account_name}' to balance ${balance:.2f}."
+
+ else:
+return f"Bank account '{account_name}' not found."
+def show_bank_accounts(): if bank_accounts:
+response = "Your bank accounts:\n"
+for account_name, balance in bank_accounts.items(): response += f"{account_name}: ${balance:.2f}\n"
+return response.strip() else:
+return "No bank accounts found."
+def total_balance():
+return f"Total balance across all accounts: ${sum(bank_accounts.values()):.2f}"
+# ---- Stock Functions #
+def load_portfolio(): try:
+if os.path.exists('portfolio.pkl'):
+with open('portfolio.pkl', 'rb') as f: return pickle.load(f)
+return {}
+except (FileNotFoundError, EOFError, pickle.UnpicklingError) as e: st.warning(f"Error loading portfolio: {e}")
+return {}
+portfolio = load_portfolio()
+
+ def save_portfolio(): try:
+with open('portfolio.pkl', 'wb') as f: pickle.dump(portfolio, f)
+except Exception as e:
+st.error(f"Error saving portfolio: {e}")
+def add_stock(ticker, amount): ticker = ticker.upper()
+if ticker in portfolio:
+portfolio[ticker] += amount else:
+portfolio[ticker] = amount
+save_portfolio()
+return f"Added {amount} shares of {ticker} to your portfolio."
+def remove_stock(ticker, amount): ticker = ticker.upper()
+if ticker in portfolio:
+if portfolio[ticker] >= amount: portfolio[ticker] -= amount if portfolio[ticker] == 0:
+del
+portfolio[ticker]
+save_portfolio()
+return f"Removed {amount} shares of {ticker} from your portfolio." else:
+
+ return "You don't have that many shares." else:
+return f"No shares of {ticker} found in your portfolio."
+def show_portfolio(): if portfolio:
+response = "Your current portfolio:\n" for ticker, shares in portfolio.items():
+response += f"{ticker}: {shares} shares\n" return response.strip()
+else:
+return "Your portfolio is empty."
+def portfolio_worth():
+total_value = 0
+response = ""
+for ticker, shares in portfolio.items():
+try:
+stock = yf.Ticker(ticker)
+price = stock.history(period="1d")['Close'].iloc[-1]
+total_value += shares * price
+response += f"{ticker}: {shares} shares at ${price:.2f} each, total ${shares *
+price:.2f}\n"
+except IndexError:
+response += f"Could not retrieve data for {ticker}. Data might be unavailable.\n" except Exception as e:
+response += f"Error retrieving data for {ticker}: {e}\n"
+
+ response += f"Your portfolio is worth: ${total_value:.2f} USD" return response
+# Stock Prediction Chart Function @st.cache_data(ttl=3600)
+def stock_prediction_chart(ticker):
+stock = yf.Ticker(ticker)
+hist = stock.history(period="1mo") if not hist.empty:
+last_price = hist['Close'].iloc[-1]
+st.line_chart(hist['Close'])
+st.write(f"The last price of {ticker} is ${last_price:.2f}.") else: st.write(f"No historical data available for {ticker}.")
+# --- Modern Portfolio Theory Optimization Functions --- # @st.cache_data(ttl=3600)
+def get_stock_data(tickers, period='1y'):
+try:
+df = yf.download(tickers, period=period)['Close'] return df
+except Exception as e:
+st.error(f"Error retrieving stock data: {e}") return None
+def optimize_portfolio(cov_matrix, mean_returns, risk_free_rate=0.02, max_weight=0.5, min_weight=0.05):
+
+ num_assets = len(mean_returns)
+args = (mean_returns, cov_matrix, risk_free_rate)
+constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
+bounds = tuple((min_weight, max_weight) for _ in range(num_assets))
+initial_weights = num_assets * [1. / num_assets]
+def negative_sharpe_ratio(weights, mean_returns, cov_matrix, risk_free_rate): portfolio_return = np.dot(weights, mean_returns)
+portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+sharpe_ratio = (portfolio_return - risk_free_rate) / portfolio_volatility
+return -sharpe_ratio # Negative because we are minimizing
+result = minimize(negative_sharpe_ratio, initial_weights, args=args, method='SLSQP', bounds=bounds, constraints=constraints)
+return result
+def calculate_portfolio_metrics(weights, mean_returns, cov_matrix, risk_free_rate=0.02): portfolio_return = np.dot(weights, mean_returns)
+portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights))) sharpe_ratio = (portfolio_return - risk_free_rate) / portfolio_volatility
+return portfolio_return, portfolio_volatility, sharpe_ratio
+def display_allocation_pie_chart(tickers, weights): fig, ax = plt.subplots()
+
+ ax.pie(weights, labels=tickers, autopct='%1.1f%%', startangle=90, colors=sns.color_palette("husl", len(tickers)))
+ax.axis('equal' ) st.pyplot(fig)
+def display_risk_return_chart(mean_returns, portfolio_return, portfolio_volatility, optimized_weights): fig, ax = plt.subplots(figsize=(8, 6))
+sns.scatterplot(x=mean_returns.index, y=mean_returns.values, size=[w * 100 for w in optimized_weights],
+hue=mean_returns.values, palette="viridis", legend=False, ax=ax) for i, ticker in enumerate(mean_returns.index):
+ax.annotate(ticker, (mean_returns.index[i], mean_returns.values[i])) ax.set_xlabel("Ticker")
+ax.set_ylabel("Average Return")
+ax.set_title("Stock Returns vs Weights")
+st.pyplot(fig)
+# Enhanced MPT-based Portfolio Optimization Function def recommend_mpt_allocation():
+st.header("Portfolio Optimization Using Modern Portfolio Theory")
+tickers = list(portfolio.keys()) if not tickers:
+return st.write("Your portfolio is empty. Please add stocks to proceed with optimization.")
+
+ df = get_stock_data(tickers) if df is None:
+return st.write("Error fetching stock data. Please try again later.")
+returns = df.pct_change().dropna() mean_returns = returns.mean() cov_matrix = returns.cov()
+portfolio_weights = np.array([portfolio[ticker] for ticker in tickers]) portfolio_weights /= portfolio_weights.sum()
+current_portfolio_return, current_portfolio_volatility, current_sharpe_ratio =
+calculate_portfolio_metrics(
+portfolio_weights, mean_returns, cov_matrix)
+st.subheader("Current Portfolio Performance")
+st.write(f"Expected annual return: **{current_portfolio_return * 100:.2f}%**") st.write(f"Portfolio risk (volatility): **{current_portfolio_volatility * 100:.2f}%**") st.write(f"Sharpe ratio (return-to-risk): **{current_sharpe_ratio:.2f}**")
+risk_tolerance = st.slider("Select your risk tolerance level (higher = more risk)", 0.1, 1.0, 0.5)
+optimized_result = optimize_portfolio(cov_matrix, mean_returns) optimized_weights = optimized_result.x
+optimized_return, optimized_volatility, optimized_sharpe_ratio =
+calculate_portfolio_metrics(
+optimized_weights, mean_returns, cov_matrix)
+
+ st.subheader("Optimized Portfolio Allocation") display_allocation_pie_chart(tickers, optimized_weights)
+st.write("### Recommended Allocation:")
+for ticker, weight in zip(tickers, optimized_weights): explanation = ""
+if weight > 0.5:
+explanation = f" - **{ticker}** has a higher weight because it's expected to deliver strong returns based on past performance."
+elif weight > 0.25:
+explanation = f" - **{ticker}** is a balanced pick, with moderate returns and risk, making it ideal for diversification."
+else:
+explanation = f" - **{ticker}** has a smaller allocation due to its lower risk- adjusted return, which helps reduce overall volatility."
+st.write(f"{ticker}: **{weight * 100:.2f}%**{explanation}")
+st.subheader("Performance of Optimized Portfolio")
+st.write(f"Expected annual return: **{optimized_return * 100:.2f}%**") st.write(f"Portfolio risk (volatility): **{optimized_volatility * 100:.2f}%**") st.write(f"Sharpe ratio (return-to-risk): **{optimized_sharpe_ratio:.2f}**")
+display_risk_return_chart(mean_returns, optimized_return, optimized_volatility, optimized_weights)
+
+ st.write("### Key Differences Between Current and Optimized Portfolios:") if current_portfolio_return < optimized_return:
+st.write(f"- The optimized portfolio improves expected returns from
+**{current_portfolio_return * 100:.2f}%** to **{optimized_return * 100:.2f}%**.") if current_portfolio_volatility > optimized_volatility:
+st.write(f"- Risk is reduced from **{current_portfolio_volatility * 100:.2f}%** to **{optimized_volatility * 100:.2f}%**.")
+if current_sharpe_ratio < optimized_sharpe_ratio:
+st.write(f"- Sharpe ratio increases from **{current_sharpe_ratio:.2f}** to
+**{optimized_sharpe_ratio:.2f}**, indicating better risk-adjusted performance.") # --- Stock Forecast App (New Section) --- #
+def stock_forecast_app():
+START = "2015-01-01"
+TODAY = date.today().strftime("%Y-%m-%d")
+# Allow the user to input any stock symbol
+user_input_stock = st.text_input('Enter the stock symbol (e.g. AAPL, TSLA, GOOGL):', 'AAPL')
+n_years = st.slider('Years of prediction:', 1, 4) period = n_years * 365
+@st.cache_data
+def load_data(ticker):
+data = yf.download(ticker, START, TODAY) data.reset_index(inplace=True)
+
+ return data
+# Load data based on user input data_load_state = st.text('Loading data...') data = load_data(user_input_stock) data_load_state.text('Loading data... done!')
+st.subheader('Raw data') st.write(data.tail())
+# Plot raw data
+def plot_raw_data():
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=data['Date'], fig.add_trace(go.Scatter(x=data['Date'], fig.layout.update(title_text='Time Series data with Rangeslider',
+xaxis_rangeslider_visible=True) st.plotly_chart(fig)
+plot_raw_data( )
+name="stock_open")) name="stock_close"))
+# Predict forecast with Prophet.
+df_train = data[['Date', 'Close']].rename(columns={"Date": "ds", "Close": "y"})
+m=
+Prophet()
+m.fit(df_trai
+n)
+future = m.make_future_dataframe(periods=period)
+y=data['Open'], y=data['Close'],
+
+ forecast = m.predict(future)
+# Show and plot forecast st.subheader('Forecast data') st.write(forecast.tail())
+st.write(f'Forecast plot for {n_years} years') fig1 = plot_plotly(m, forecast) st.plotly_chart(fig1)
+st.write("Forecast components") fig2 = m.plot_components(forecast) st.write(fig2)
+# Recommendation Logic based on the forecast def get_recommendation(forecast, current_price):
+predicted_prices = forecast['yhat'].tail(period)
+first_predicted = predicted_prices.iloc[0] last_predicted = predicted_prices.iloc[-1]
+price_change = (last_predicted - current_price) / current_price * 100
+if price_change > 5:
+recommendation = "Buy"
+reason = f"The stock price is predicted to increase by {price_change:.2f}% over the next
+{n_years} year(s). This suggests a good opportunity to buy."
+
+ elif price_change < -5:
+recommendation = "Sell"
+reason = f"The stock price is predicted to decrease by {price_change:.2f}% over the next
+{n_years} year(s). You may want to sell to avoid potential losses." else:
+recommendation = "Hold"
+reason = f"The stock price is predicted to change by {price_change:.2f}% over the next {n_years} year(s), indicating stability. You might want to hold your position."
+return recommendation, reason
+# Get the last closing price current_price = data['Close'].iloc[-1]
+# Generate recommendation
+recommendation, reason = get_recommendation(forecast, current_price)
+# Display recommendation st.subheader('Recommendation') st.write(f"**Recommendation:** {recommendation}") st.write(f"**Reason:** {reason}")
+# --- Function to Predict the Last 5 Days and Compare with Actual Prices --- # def predict_past_5_days():
+START = "2015-01-01"
+TODAY = date.today().strftime("%Y-%m-%d")
+user_input_stock = st.text_input('Enter the stock symbol for past 5 days prediction (e.g.
+
+ AAPL, TSLA, GOOGL):', 'AAPL')
+if user_input_stock:
+# Load full stock data
+full_data = yf.download(user_input_stock, START, TODAY) full_data.reset_index(inplace=True)
+if full_data.empty:
+st.warning("No stock data found for the given symbol. Please check the stock symbol and try again.")
+return
+# Prepare data for Prophet
+df_train = full_data[['Date', 'Close']].rename(columns={"Date": "ds", "Close": "y"})
+# Train the Prophet model model = Prophet() model.fit(df_train)
+# Make predictions for all historical data, including the last 5 days
+future = model.make_future_dataframe(periods=0, include_history=True) # No future prediction, only past
+forecast = model.predict(future)
+# Filter the last 5 days
+past_5_days = df_train.tail(5) predicted_past_5_days = forecast[['ds', 'yhat']].tail(5)
+
+ # Merge actual and predicted data
+comparison_df = past_5_days[['ds', 'y']].merge(predicted_past_5_days, on='ds')
+# Calculate accuracy for each day as percentage difference comparison_df['error_percentage'] =
+abs((comparison_df['y'] - comparison_df['yhat']) / comparison_df['y']) * 100
+overall_accuracy = 100 - comparison_df['error_percentage'].mean()
+# Display comparison and accuracy
+st.subheader('Comparison: Actual vs Predicted for the Last 5 Days') st.write(comparison_df)
+st.write(f"Overall Prediction Accuracy for the Last 5 Days: **{overall_accuracy:.2f}%**")
+# --- Streamlit Application --- # def main():
+st.title("Investment Portfolio Management")
+st.markdown("<hr style='border:1px solid #EEE'/>", unsafe_allow_html=True)
+st.sidebar.title("Navigation")
+options = st.sidebar.radio("Select an option", ("Bank Accounts", "Stocks", "Portfolio Optimization", "Stock Forecast App", "Past 5 Days Prediction"))
+if options == "Bank Accounts": st.header("Manage Bank Accounts")
+
+ action = st.selectbox("Action", ("Add Account", "Remove Account", "Update Account", "Show Accounts"))
+if action == "Add Account":
+account_name = st.text_input("Account Name") balance = st.number_input("Balance", min_value=0.0) if st.button("Add Account"):
+st.write(add_bank_account(account_name, balance)) elif action == "Remove Account":
+account_name = st.text_input("Account Name") if st.button("Remove Account"):
+st.write(remove_bank_account(account_name)) elif action == "Update Account":
+account_name = st.text_input("Account Name")
+balance = st.number_input("New Balance", min_value=0.0) if st.button("Update Account"):
+st.write(update_bank_account(account_name, balance)) elif action == "Show Accounts":
+st.write(show_bank_accounts()) st.write(total_balance())
+elif options == "Stocks":
+st.header("Manage Stock Portfolio")
+action = st.selectbox("Action", ("Add Stock", "Remove Stock", "Show Portfolio", "View Stock
+Prediction"))
+if action == "Add Stock":
+ticker = st.text_input("Stock Ticker")
+amount = st.number_input("Number of Shares", min_value=0)
+
+if
+if st.button("Add Stock"): st.write(add_stock(ticker, amount))
+elif action == "Remove Stock":
+ticker = st.text_input("Stock Ticker")
+amount = st.number_input("Number of Shares", min_value=0) if st.button("Remove Stock"):
+st.write(remove_stock(ticker, amount)) elif action == "Show Portfolio":
+st.write(show_portfolio())
+st.write(portfolio_worth())
+elif action == "View Stock Prediction":
+ticker = st.text_input("Stock Ticker") if st.button("View Chart"):
+stock_prediction_chart(ticker)
+elif options == "Portfolio Optimization":
+st.header("Portfolio Optimization Using Modern Portfolio Theory") recommend_mpt_allocation()
+elif options == "Stock Forecast App": stock_forecast_app()
+elif options == "Past 5 Days Prediction": predict_past_5_days()
+name == "__main ": main()
